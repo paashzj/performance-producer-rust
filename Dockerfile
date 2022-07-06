@@ -17,15 +17,16 @@
 # under the License.
 #
 
-[package]
-name = "performance-producer-rust"
-version = "0.1.0"
-edition = "2021"
+FROM ttbb/compile:rust AS build
+COPY . /opt/sh/compile
+WORKDIR /opt/sh/compile
+RUN /root/.cargo/bin/cargo build
 
-[dependencies]
-rand = "0.8.5"
-futures = "0.3"
-pulsar = "4.0"
-tokio = { version = "1.19.2", features = ["full"] }
-serde = { version = "1.0.138", features = ["derive"] }
-serde-env = "0.0.2"
+
+FROM ttbb/base
+
+COPY --from=build /opt/sh/compile/target/debug/performance-producer-rust /opt/sh/performance-producer
+
+WORKDIR /opt/sh
+
+CMD ["/usr/bin/dumb-init", "/opt/sh/performance-producer"]

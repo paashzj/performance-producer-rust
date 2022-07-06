@@ -16,16 +16,21 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-
-[package]
-name = "performance-producer-rust"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-rand = "0.8.5"
-futures = "0.3"
-pulsar = "4.0"
-tokio = { version = "1.19.2", features = ["full"] }
-serde = { version = "1.0.138", features = ["derive"] }
-serde-env = "0.0.2"
+name: rust clippy
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  clippy_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: rustup component add clippy
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features

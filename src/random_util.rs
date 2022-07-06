@@ -15,21 +15,12 @@
 // specific language governing permissions and limitations
 // under the License.
 
-mod pulsar;
-mod random_util;
+use rand::Rng;
 
-use std::env;
-
-#[tokio::main]
-async fn main() {
-    match env::var("PRODUCE_TYPE") {
-        Ok(produce_type) => {
-            if produce_type == "pulsar" {
-                pulsar::start().await;
-            }
-        }
-        Err(_) => {
-            println!("produce type is not set");
-        }
-    }
+pub(crate) fn random_str(len: usize) -> String {
+    rand::thread_rng()
+        .sample_iter(&rand::distributions::Alphanumeric)
+        .take(len)
+        .map(char::from)
+        .collect()
 }
